@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TJ Search Result</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="{% static 'frontend/img/galaxy.jfif' %}" type="image/x-icon">
+    <!-- <link rel="apple-touch-icon" type="image/x-icon" href="{% static 'frontend/img/apple-touch-icon-57x57-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="{% static 'frontend/img/apple-touch-icon-72x72-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="{% static 'frontend/img/apple-touch-icon-114x114-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="{% static 'frontend/img/apple-touch-icon-144x144-precomposed.png' %}"> -->
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link href="{% static 'frontend/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'frontend/css/style.css' %}" rel="stylesheet">
+	<link href="{% static 'frontend/css/vendors.css' %}" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="{% static 'frontend/css/custom.css' %}" rel="stylesheet">
+</head>
+<body>
+
+
+    <div class="jumbotron mt-2">
+        <h4 class="text-warning" style="margin-top: -55px;"><a href="{% url 'search_app:home' %}">TJ Search Engine</a></h4>
+        <br>
+
+        <div class="container">
+            <div class="text-center" style="width: 100%;">
+                <form action="{% url 'search_app:search' %}"  class="form-inline" method="GET">
+                    <input type="text" name="search_text" id="search" class="form-control col-md-8 form-rounded" placeholder="Search" value="{{request.GET.search_text}}" style="width: 70%;">
+                    <button type="submit" id="submit" class="btn btn-outline-danger rounded col-lg-2  text-center"> Search</button>
+                    {%csrf_token%}
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <a href="#toTop"></a>
+    <div class="container">
+        <div class="row">
+            <ul class="list-group list-group-flush col-md-10">
+                {% for object in object_list %}
+                    <li class="list-group-item">
+                        <a href="{{object.url}}" class="text-dark" target="_blank">{{object.url}}</a>
+                        <h4><a href="{{object.url}}" target="_blank">{{object.title}}</a></h4>
+                        <h5>{{object.text|safe}}</h5>
+                        <h5>{{object.date}}</h5>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="card-footer">
+    			<nav aria-label="results navigation">
+		            {% if object_list.has_other_pages %}
+		            	<ul class="pagination justify-content-center m-0">
+		            		{% if object_list.has_previous %}
+		            			<li class="page-item"><a class="page-link" href="?search_text={{search_text}}&page={{object_list.previous_page_number}}">&laquo;</a></li>
+		            		{% else %}
+			            		<li class="disabled page-item"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+		            		{% endif %}
+		            		{% for i in object_list.paginator.page_range %}
+		            			{% if object_list.number == i %}
+		            				<li class="active page-item"><a class="page-link" href="#">{{i}}</a><span class="sr-only">(current)</span></li>
+		            			{% else %}
+		            				<li class="page-item"><a class="page-link" href="?search_text={{search_text}}&page={{i}}">{{i}}</a></li>
+		            			{% endif %}
+		            		{% endfor %}
+		            		{% if object_list.has_next %}
+		            			<li class="page-item"><a class="page-link" href="?search_text={{search_text}}&page={{object_list.next_page_number}}">&raquo;</a></li>
+		            		{% else %}
+		            			<li class="disabled page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+		            		{% endif %}
+		            	</ul>
+		            {% endif %}
+    			</nav>
+    		</div>
+    	</div>
+
+        </div>
+    </div>
+
+
+
+
+  
+
+    <!-- <footer class="container">
+        <p>© 2021 DW Search Engine</p>
+    </footer> -->
+
+
+    <div id="toTop"></div><!-- Back to top button -->
+	
+	<!-- COMMON SCRIPTS -->
+    <script src="{% static 'frontend/js/jquery-2.2.4.min.js' %}"></script>
+    <script src="{% static 'frontend/js/common_scripts.js' %}"></script>
+    <script src="{% static 'frontend/js/main.js' %}"></script>
+	<script src="{% static 'frontend/assets/validate.js' %}"></script>
+	
+	<!-- DATEPICKER  -->
+	<script>
+	$(function() {
+	  'use strict';
+	  $('input[name="dates"]').daterangepicker({
+		  autoUpdateInput: false,
+		  locale: {
+			  cancelLabel: 'Clear'
+		  }
+	  });
+	  $('input[name="dates"]').on('apply.daterangepicker', function(ev, picker) {
+		  $(this).val(picker.startDate.format('MM-DD-YY') + ' > ' + picker.endDate.format('MM-DD-YY'));
+	  });
+	  $('input[name="dates"]').on('cancel.daterangepicker', function(ev, picker) {
+		  $(this).val('');
+	  });
+	});
+	</script>
+	
+	<!-- INPUT QUANTITY  -->
+	<script src="{% static 'frontend/js/input_qty.js' %}"></script>
+</body>
+</html>
